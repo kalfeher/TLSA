@@ -1,0 +1,20 @@
+---
+  - name: Set distribution specific vars
+    include_vars: "{{ item }}"
+    with_first_found:
+        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_distribution }}.yml"
+
+  - name: Find active certificate files
+    include_tasks: cert_files.yml
+    loop: "{{domains}}"
+    loop_control:
+      loop_var: domain
+      label: "{{domain.name}}"
+
+  - name: Update DNS TLSA records
+    include_tasks: tlsa_dns_update.yml
+    loop: "{{domains}}"
+    loop_control:
+      loop_var: domain
+      label: "{{domain.name}}"

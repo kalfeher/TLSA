@@ -1,0 +1,3 @@
+---
+  tlsa_packages:
+    - dev-python/dnspython

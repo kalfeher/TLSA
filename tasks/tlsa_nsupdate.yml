@@ -1,0 +1,37 @@
+---
+  - name:
+    set_fact:
+      values: []
+
+  - name: create value list for NSUPDATE module
+    set_fact:
+      values: "{{ values }} + ['{{ ('3 1 1' if item['entity_type']=='EE' else '2 1 1') }} {{item['spki']}}']"
+    loop: "{{tlsa_active_vars[domain.name]['cert_list']}}"
+
+  - name: Update TLSA records
+    nsupdate:
+      key_name: "{{ dns_update_details[domain.name].tsig_name|default(dns_update_details['default'].tsig_name) }}"
+      key_secret: "{{ dns_update_details[domain.name].tsig_key|default(dns_update_details['default'].tsig_key) }}"
+      key_algorithm: "{{ dns_update_details[domain.name].tsig_algo|default(dns_update_details['default'].tsig_algo) }}"
+      server: "{{ dns_update_details[domain.name].host|default(dns_update_details['default'].host) }}"
+      record: "{{tlsa_rr}}.{{ domain.name }}."
+      type: "TLSA"
+      value: "{{values}}"
+      ttl: "{{dns_rr_ttl}}" # seconds
+      state: "present"
+    delegate_to: localhost
+    register: dns_state
+
+  - name: Update TXT record
+    nsupdate:
+      key_name: "{{ dns_update_details[domain.name].tsig_name|default(dns_update_details['default'].tsig_name) }}"
+      key_secret: "{{ dns_update_details[domain.name].tsig_key|default(dns_update_details['default'].tsig_key) }}"
+      key_algorithm: "{{ dns_update_details[domain.name].tsig_algo|default(dns_update_details['default'].tsig_algo) }}"
+      server: "{{ dns_update_details[domain.name].host|default(dns_update_details['default'].host) }}"
+      record: "{{tlsa_rr}}.{{ domain.name }}."
+      type: "TXT"
+      value: "Last updated: {{ansible_date_time.iso8601}} by Ansible TLSA role"
+      ttl: "{{dns_rr_ttl}}" # seconds
+      state: "present"
+    delegate_to: localhost
+    when: dns_state.changed

@@ -1,0 +1,50 @@
+---
+  - name: Get certificate files
+    find:
+      paths: "{{cert_root_dir}}/{{domain.name}}/{{cert_sub_dir}}"
+      patterns: "{{cert_file_patterns}}"
+      excludes: "{{cert_exclude_patterns}}"
+      file_type: any
+    register: certificate_files
+
+  - name: Collect information from found certificate files.
+    block:
+      - name: Create Certificate list (per domain variable)
+        set_fact:
+          cert_list: []
+      - name: Create list of services per domain
+        set_fact:
+          svc_list: []
+      - name: Create active certificate list
+        set_fact:
+          active_certs: []
+
+      - name: map services to RRs
+        set_fact:
+          svc_list: "{{svc_list}} + ['{{tlsa_dns_service_prefix[service_application_map|selectattr('application', 'search', item)| map(attribute='service')|join(', ')]}}']"
+        loop: "{{domain.services}}"
+        loop_control:
+          label: "{{item}}"
+
+      - name: Get certificate info
+        openssl_certificate_info:
+          path: "{{item.path}}"
+        register: certs_info
+        loop: "{{certificate_files['files']}}"
+        loop_control:
+          label: "{{item.path}}"
+
+      - name: Create certificate dictionary list
+        set_fact:
+          cert_list: "{{cert_list + [{'spki': cert.public_key_fingerprints.sha256|replace(':',''), 'rr_list': svc_list, 'expiry': cert.not_after, 'entity_type': ( 'TA' if 'CA:TRUE' in cert.basic_constraints else 'EE') }] }}"
+        loop: "{{certs_info.results}}"
+        loop_control:
+          loop_var: cert
+          label: "{{cert.subject}}"
+
+
+
+      - name: Set per domain variables
+        set_fact:
+          tlsa_active_vars: "{{tlsa_active_vars|combine({domain.name: {'cert_list': cert_list, 'svc_list': svc_list }}, recursive=true) }}"
+    when: certificate_files.matched > 0

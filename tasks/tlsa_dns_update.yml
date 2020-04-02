@@ -1,0 +1,10 @@
+---
+  - name: For all Domains with certificate files
+    block:
+    - name: Loop nsupdate through active certs
+      include_tasks: tlsa_nsupdate.yml
+      loop: "{{ tlsa_active_vars[domain.name]['svc_list'] }}"
+      loop_control:
+        loop_var: tlsa_rr
+        label: tlsa_rr
+    when: tlsa_active_vars[domain.name] is defined

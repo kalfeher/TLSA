@@ -1,0 +1,6 @@
+---
+  - name: Install required packages
+    become: yes
+    portage:
+      name: "{{ tlsa_packages }}"
+      state: latest

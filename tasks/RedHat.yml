@@ -1,0 +1,6 @@
+---
+  - name: Install required packages
+    become: yes
+    yum:
+      name: "{{ tlsa_packages }}"
+      state: latest

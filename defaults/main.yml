@@ -1,0 +1,18 @@
+---
+  domains:
+    - { name: example.com, services: ['postfix', 'dovecot'] }
+  cert_sub_dir: "certs"
+  #dst_priv_sub_dir: "priv"
+  cert_root_dir: "/etc/certificates/"
+
+  dns_publish_delay: '3600' # length of time before RR visble externally
+  dns_rr_ttl: '60' #
+  dns_rr_remove_min: '86400' # wait this long at least before removing records
+  dns_rr_remove: "{{ publish_delay + rr_ttl + wait }}"
+  cert_file_patterns: # Certificate file extensions
+    - '*.pem'
+    - '*.crt'
+    - '*.cer'
+  cert_exclude_patterns:
+    - 'fullchain.*'
+    - 'privkey.*'

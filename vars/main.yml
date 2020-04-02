@@ -1,0 +1,18 @@
+---
+  tlsa_dns_service_prefix:
+    smtp: '_25._tcp'
+    https: '_443._tcp'
+    imap: '_993._tcp'
+
+  service_application_map:
+    - application: "postfix,sendmail"
+      service: "smtp"
+    - application: "apache2,apache,nginx,httpd"
+      service: "https"
+    - application: "dovecot"
+      service: "imap"
+
+  tlsa_cert_list: []
+  #  example.com:
+  #  - { 'spki': 'value', rr_list: [], state: 'active_state', entity_type: 'ee' }
+  tlsa_active_vars: {}
