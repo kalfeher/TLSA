@@ -1,9 +1,32 @@
 ---
-  - name: Set distribution specific vars
+  - name: Gather localhost ansible_facts
+    setup:
+    delegate_to: localhost
+    delegate_facts: True
+    run_once: True
+    tags:
+      - setup
+
+
+  - name: Set OS specific vars
     include_vars: "{{ item }}"
     with_first_found:
-        - "{{ ansible_os_family }}.yml"
-        - "{{ ansible_distribution }}.yml"
+        - "{{ hostvars['localhost']['ansible_facts']['os_family'] }}.yml"
+        - "{{ hostvars['localhost']['ansible_facts']['distribution'] }}.yml"
+    run_once: True
+    tags:
+      - setup
+
+
+  - name: Install OS specific packages.
+    include_tasks: "{{item}}"
+    with_first_found:
+      - "{{ hostvars['localhost']['ansible_facts']['os_family'] }}.yml"
+      - "{{ hostvars['localhost']['ansible_facts']['distribution'] }}.yml"
+    run_once: True
+    tags:
+      - setup
+
 
   - name: Find active certificate files
     include_tasks: cert_files.yml

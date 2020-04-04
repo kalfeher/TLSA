@@ -1,7 +1,7 @@
 ---
   - name: Install required packages
     become: yes
-    portage:
+    apt:
       name: "{{ tlsa_packages }}"
       state: latest
     delegate_to: localhost

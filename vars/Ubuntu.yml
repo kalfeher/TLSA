@@ -1,0 +1,3 @@
+---
+  tlsa_packages:
+    - python3-dnspython

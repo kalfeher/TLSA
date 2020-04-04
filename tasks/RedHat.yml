@@ -4,3 +4,4 @@
     yum:
       name: "{{ tlsa_packages }}"
       state: latest
+    delegate_to: localhost
