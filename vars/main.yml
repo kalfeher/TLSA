@@ -13,6 +13,4 @@
       service: "imap"
 
   tlsa_cert_list: []
-  #  example.com:
-  #  - { 'spki': 'value', rr_list: [], state: 'active_state', entity_type: 'ee' }
   tlsa_active_vars: {}
