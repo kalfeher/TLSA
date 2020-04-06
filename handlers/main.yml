@@ -1,5 +1,0 @@
----
-  - name: restart <something>
-    service:
-      name: <servicename>
-      state: restarted

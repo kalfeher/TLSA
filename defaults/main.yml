@@ -2,7 +2,7 @@
   domains:
     - { name: example.com, services: ['postfix', 'dovecot'] }
   cert_sub_dir: "certs"
-  #dst_priv_sub_dir: "priv"
+
   cert_root_dir: "/etc/certificates/"
 
   dns_publish_delay: '3600' # length of time before RR visble externally
