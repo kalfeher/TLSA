@@ -43,7 +43,6 @@
           label: "{{cert.subject}}"
 
 
-
       - name: Set per domain variables
         set_fact:
           tlsa_active_vars: "{{tlsa_active_vars|combine({domain.name: {'cert_list': cert_list, 'svc_list': svc_list }}, recursive=true) }}"
