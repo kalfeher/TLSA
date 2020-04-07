@@ -4,10 +4,11 @@ Role to add TLSA records from certificates.
 The role expects that certificates are in individual files. Typically this means a file for the server certificate and a separate file for the CA issuing certificate, if desired. Files which combine both certificates should be excluded. If you have an application that requires both server and issuer certificates in a single file, you can configure your ACME client to generate both types.
 
 ## Required Variables
-`domains`: A list of dictionaries specifying domains and the services they are used for. This are the specific labels for which a service will respond.
+`domains`: A list of dictionaries specifying domains and the services they are used for. These are the specific DNS labels for which a service will respond.
 ~~~yaml
 domains:
-  - { name: example.com, services: ['postfix', 'dovecot', 'apache'] }
+  - { name: example.com, services: ['apache'] }
+  - { name: smtp.example.com, services: ['postfix'] }
 ~~~
 ## Recommended Variables
 `cert_root_dir`: The root directory under which all domain subdirectories containing certificates are expected.
