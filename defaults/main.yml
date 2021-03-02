@@ -2,6 +2,12 @@
   domains:
     - { name: example.com, services: ['postfix', 'dovecot'] }
   cert_sub_dir: "certs"
+  dns_update_details:
+    'default': 
+      host: 'ns1.example.com' 
+      tsig_name: 'my-tsig' 
+      tsig_key: "mysecret123" 
+      tsig_algo: "hmac-sha256"
 
   cert_root_dir: "/etc/certificates/"
 
